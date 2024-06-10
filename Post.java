@@ -14,7 +14,7 @@ public class Post {
 	private String[] postTypes = {"Very Difficult", "Difficult", "Easy"};
 	private String[] postEmergency = {"Immediately Needed", "Highly Needed", "Ordinary"};
 	private ArrayList <Integer> postIDs = new ArrayList<>();
-	private ArrayList <String> postComments = new ArrayList<>();
+	private ArrayList<ArrayList<String>> postComments = new ArrayList<>();
 	//creation of variables that are used between the methods
 
 	public boolean addPost() { //post method
@@ -38,6 +38,7 @@ public class Post {
 		
 		System.out.println("Tags should be a minimum of 2 characters and a maximum of 10");
 		System.out.println("Tags should have no capital letters");
+		scanner.nextLine();
 		for(int i = 0; i < tagsNumber; i++) {
 			System.out.println("Enter tag number " + (i+1));
 			postTags[i] = scanner.nextLine();
@@ -109,6 +110,8 @@ public class Post {
 		
 		postID = postIDs.size();
 		postIDs.add(postID);
+		postComments.add(new ArrayList<>());
+		System.out.println("Added to postID");
 		
 		//save file
 		
@@ -144,21 +147,22 @@ public class Post {
 		
 		System.out.println("What post do you want to comment on? Enter post ID.");
 		samplePostID = scanner.nextInt();
+		scanner.nextLine(); 
 		//ask for post id
 		
-		for(int i = 0; i < postIDs.size(); i++) {
-			if(samplePostID == postIDs.get(i)) {
-				matches = true;
-				break;
-			}
+		if(samplePostID >= 0 && samplePostID < postIDs.size()) {
+			matches = true;
 		}
 		//check if post exists
 		
 		if(matches == false) {
+			System.out.println("Post ID does not exist");
 			return false;
 		}
 		
-		if(postComments.get(samplePostID).length() == 5) {
+		
+		
+		if(postComments.get(samplePostID).size() >= 5) {
 			System.out.println("Too many comments on this post.");
 			return false;
 		}
@@ -185,12 +189,13 @@ public class Post {
 			}
 		}
 		//check all the words are upper case
-		
+		postComments.get(samplePostID).add(comment);
 		
 		//save to file
 		
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("comment.txt"))) {
 			writer.write(comment);
+			writer.newLine(); //write new comments on new lines
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -202,6 +207,10 @@ public class Post {
 	public static void main(String[] args) {
 		Post post = new Post();
 		System.out.println(post.addPost());
+		
+		System.out.println(post.addComment());
+		
+		
 	}
 	//main method
 
